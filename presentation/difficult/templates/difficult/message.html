@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mensaje</title>
+    <link href="https://fonts.googleapis.com/css?family=Indie+Flower|Nanum+Pen+Script" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'difficult/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <label>
+            <div class="heart">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/42/Love_Heart_SVG.svg"></img>
+            </div>
+            <input 
+                id="messageState" 
+                type="checkbox" 
+                style="display:none" 
+                onchange="updateEnvelopeState()" 
+            />
+        </label>
+        <div class="message">
+            <div id="" style="overflow-y:scroll; overflow-x:hidden; height:620px;">
+                <p style="font-size:40px; padding: 20px 10px 10px;">
+                    I miss you {{ recipient_name }}
+                    <br>
+                    - Dy
+                </p>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#messageState').change(function() {
+                if ($(this).is(':checked')) {
+     
+                    $.ajax({
+                        url: "{% url 'increment_envelope_count' recipient_name %}",
+                        method: "POST",
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        success: function(response) {
+                            if (response.status === 'success') {
+                                console.log('Envelope open count incremented');
+                            } else {
+                                console.log('Failed to increment envelope open count');
+                            }
+                        },
+                        error: function() {
+                            console.log('Error during AJAX request');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+    <script src="{% static 'average/functions.js' %}"></script>
+</body>
+</html>
